@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backtest Pro</title>
+  </head>
+  <body>
+    <div id="app">
+      <header id="topBar">
+        <div class="top-left">
+          <div class="symbol-box">
+            <span class="symbol-flag">🇪🇺</span>
+            <select id="pairSelect">
+              <option value="EURUSD">EURUSD</option>
+            </select>
+          </div>
+          <div class="timeframe-pills">
+            <button class="tf-btn" data-tf="1m">1m</button>
+            <button class="tf-btn" data-tf="5m">5m</button>
+            <button class="tf-btn" data-tf="15m">15m</button>
+            <button class="tf-btn" data-tf="30m">30m</button>
+            <button class="tf-btn active" data-tf="1h">1h</button>
+            <button class="tf-btn" data-tf="4h">4h</button>
+            <button class="tf-btn" data-tf="1d">D</button>
+            <button class="tf-btn" data-tf="1w">W</button>
+          </div>
+        </div>
+        <div class="top-center">
+          <button class="top-btn" id="indicatorsBtn" title="Indicators">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 4-6"/></svg>
+            <span>Indicators</span>
+          </button>
+          <button class="top-btn" id="alertBtn" title="Alerts">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span>Alert</span>
+          </button>
+          <button class="top-btn" id="replayToggleBtn" title="Bar Replay">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Replay</span>
+          </button>
+          <div class="top-sep"></div>
+          <button class="top-btn" id="undoBtn" title="Undo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/></svg>
+          </button>
+          <button class="top-btn" id="redoBtn" title="Redo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13"/></svg>
+          </button>
+          <div class="top-sep"></div>
+          <button class="top-btn" id="screenshotBtn" title="Screenshot">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </button>
+          <button class="top-btn" id="settingsBtn" title="Chart Settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          </button>
+        </div>
+        <div class="top-right">
+          <span id="errorMsg" class="error-text"></span>
+          <span id="replayHint" class="hint-text"></span>
+        </div>
+      </header>
+
+      <div id="workspace">
+        <nav id="toolRail">
+          <div class="rail-group">
+            <div class="rail-item active" data-category="cursor" title="Cursor (C)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+            </div>
+          </div>
+          <div class="rail-sep"></div>
+          <div class="rail-group">
+            <div class="rail-item" data-category="trend" title="Trend Lines">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20L9 14l4 4 8-12"/></svg>
+            </div>
+            <div class="rail-item" data-category="horizontal" title="Horizontal & Vertical">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M12 4v16"/></svg>
+            </div>
+            <div class="rail-item" data-category="shapes" title="Shapes">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            </div>
+            <div class="rail-item" data-category="fib" title="Fibonacci">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 10h14M3 14h10M3 18h6"/></svg>
+            </div>
+            <div class="rail-item" data-category="text" title="Text">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V5h16v2M9 20h6M12 5v15"/></svg>
+            </div>
+          </div>
+          <div class="rail-sep"></div>
+          <div class="rail-group">
+            <div class="rail-item" data-category="measure" title="Measure">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M12 2v20"/></svg>
+            </div>
+          </div>
+          <div class="rail-filler"></div>
+          <div class="rail-group">
+            <div class="rail-item" id="clearAllRailBtn" title="Clear All Drawings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+            </div>
+          </div>
+        </nav>
+
+        <div id="flyoutPanel" class="hidden">
+          <div class="flyout-header">
+            <span id="flyoutTitle">Tools</span>
+            <button id="closeFlyout">✕</button>
+          </div>
+          <div id="flyoutContent"></div>
+        </div>
+
+        <div id="centerArea">
+          <div id="chartContainer">
+            <div id="chart"></div>
+            <div id="chartLoading" class="chart-overlay hidden">
+              <div class="spinner"></div>
+              <span>Loading chart data...</span>
+            </div>
+            <div id="chartError" class="chart-overlay hidden">
+              <div class="error-icon">⚠</div>
+              <span id="chartErrorText">Failed to load data</span>
+              <button class="btn btn-sm" id="retryLoadBtn">Retry</button>
+            </div>
+            <div id="playback" class="hidden">
+              <div class="playback-bar">
+                <button id="stepBtn" class="btn btn-icon" title="Step Forward">⏵</button>
+                <button id="playBtn" class="btn btn-icon" title="Play">▶</button>
+                <button id="pauseBtn" class="btn btn-icon" title="Pause">⏸</button>
+                <button id="resetBtn" class="btn btn-icon" title="Exit Replay">✕</button>
+                <div class="playback-sep"></div>
+                <select id="speedSelect" class="playback-speed">
+                  <option value="1000">0.5x</option>
+                  <option value="500" selected>1x</option>
+                  <option value="250">2x</option>
+                  <option value="100">5x</option>
+                  <option value="40">10x</option>
+                </select>
+                <span id="progressLabel" class="playback-progress">0 / 0</span>
+                <div class="playback-sep"></div>
+                <button id="buyBtn" class="btn btn-buy">BUY</button>
+                <button id="sellBtn" class="btn btn-sell">SELL</button>
+                <button id="closeBtn" class="btn btn-ghost" disabled>CLOSE</button>
+                <span id="tradeStatus" class="trade-status"></span>
+                <span id="statsPanel" class="trade-stats">Trades: 0 | Win: 0% | P&L: 0 pips</span>
+              </div>
+            </div>
+          </div>
+          <div id="bottomBar">
+            <div class="range-btns">
+              <button class="range-btn" data-range="1D">1D</button>
+              <button class="range-btn" data-range="5D">5D</button>
+              <button class="range-btn active" data-range="1M">1M</button>
+              <button class="range-btn" data-range="3M">3M</button>
+              <button class="range-btn" data-range="6M">6M</button>
+              <button class="range-btn" data-range="YTD">YTD</button>
+              <button class="range-btn" data-range="1Y">1Y</button>
+              <button class="range-btn" data-range="5Y">5Y</button>
+              <button class="range-btn" data-range="ALL">All</button>
+            </div>
+            <div class="bottom-right">
+              <select id="scaleModeSelect" class="scale-select">
+                <option value="0">Auto</option>
+                <option value="1">Log</option>
+                <option value="2">Percent</option>
+              </select>
+              <button class="btn btn-icon" id="fitBtn" title="Fit Chart">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <aside id="rightPanel">
+          <div class="panel-tabs">
+            <button class="tab-btn active" data-tab="watchlist">Watchlist</button>
+            <button class="tab-btn" data-tab="objects">Objects</button>
+          </div>
+          <div class="panel-content" id="watchlistTab">
+            <div class="watchlist-header">
+              <span>Symbol</span>
+              <span>Last</span>
+              <span>Chg%</span>
+            </div>
+            <div class="watchlist-section">
+              <div class="wl-section-header" data-section="forex">
+                <svg class="wl-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>
+                <span>FOREX</span>
+              </div>
+              <div class="wl-section-body" id="wl-forex">
+                <div class="wl-row" data-pair="EURUSD">
+                  <span class="wl-name">🇪🇺 EURUSD</span>
+                  <span class="wl-price">1.08500</span>
+                  <span class="wl-change down">-0.04%</span>
+                </div>
+                <div class="wl-row" data-pair="GBPUSD">
+                  <span class="wl-name">🇬🇧 GBPUSD</span>
+                  <span class="wl-price">1.27400</span>
+                  <span class="wl-change up">+0.12%</span>
+                </div>
+                <div class="wl-row" data-pair="USDJPY">
+                  <span class="wl-name">🇯🇵 USDJPY</span>
+                  <span class="wl-price">149.200</span>
+                  <span class="wl-change up">+0.08%</span>
+                </div>
+              </div>
+            </div>
+            <div class="watchlist-section">
+              <div class="wl-section-header" data-section="crypto">
+                <svg class="wl-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>
+                <span>CRYPTO</span>
+              </div>
+              <div class="wl-section-body collapsed" id="wl-crypto">
+                <div class="wl-row" data-pair="BTCUSD">
+                  <span class="wl-name">₿ BTCUSD</span>
+                  <span class="wl-price">43250.00</span>
+                  <span class="wl-change up">+1.24%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-content hidden" id="objectsTab">
+            <div class="panel-section-header">
+              <span>Drawings</span>
+              <button id="clearAllDrawings" class="icon-btn danger" title="Clear All">🗑</button>
+            </div>
+            <div id="objectTree" class="object-tree-empty">No drawings yet</div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Hidden date inputs for JS compatibility -->
+    <input type="date" id="fromDate" value="2023-01-01" style="display:none" />
+    <input type="date" id="toDate" value="2023-12-31" style="display:none" />
+
+    <div id="settingsModal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Chart Settings</h3>
+          <button class="modal-close">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-group">
+            <label>Theme</label>
+            <div class="setting-row">
+              <button class="theme-btn active" data-theme="dark">Dark</button>
+              <button class="theme-btn" data-theme="light">Light</button>
+            </div>
+          </div>
+          <div class="setting-group">
+            <label>Candle Colors</label>
+            <div class="setting-row">
+              <div class="color-picker">
+                <span>Up</span>
+                <input type="color" id="upColor" value="#089981" />
+              </div>
+              <div class="color-picker">
+                <span>Down</span>
+                <input type="color" id="downColor" value="#f23645" />
+              </div>
+            </div>
+          </div>
+          <div class="setting-group">
+            <label>Background</label>
+            <input type="color" id="bgColor" value="#131722" />
+          </div>
+          <div class="setting-group">
+            <label>Grid Lines</label>
+            <input type="color" id="gridColor" value="#1e222d" />
+          </div>
+          <div class="setting-group">
+            <label>Crosshair</label>
+            <input type="color" id="crosshairColor" value="#758696" />
+          </div>
+          <div class="setting-group">
+            <label>Options</label>
+            <div class="checkbox-row">
+              <input type="checkbox" id="watermarkToggle" checked />
+              <label for="watermarkToggle">Show Watermark</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="gridToggle" checked />
+              <label for="gridToggle">Show Grid</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="resetSettingsBtn">Reset Defaults</button>
+          <button class="btn btn-primary" id="saveSettingsBtn">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toastContainer"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';port { createChart, CrosshairMode } from 'lightweight-charts';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+
+export function getApiUrl(path) {
+  return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+export function createChartView(container, state) {
+  const chart = createChart(container, {
+    layout: { background: { color: '#111' }, textColor: '#ddd' },
+    grid: { vertLines: { color: '#222' }, horzLines: { color: '#222' } },
+    crosshair: { mode: CrosshairMode.Normal },
+    timeScale: { timeVisible: true, secondsVisible: false },
+    autoSize: true,
+    watermark: {
+      visible: true,
+      text: 'Backtest App',
+      color: 'rgba(255,255,255,0.08)',
+      fontSize: 48,
+    },
+  });
+
+  const candleSeries = chart.addCandlestickSeries();
+
+  async function loadCandles({ pair, from, to, timeframe }) {
+    const response = await fetch(
+      getApiUrl(`/candles?pair=${encodeURIComponent(pair)}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&timeframe=${encodeURIComponent(timeframe)}`)
+    );
+
+    if (!response.ok) {
+      throw new Error(`Server responded with status ${response.status}`);
+    }
+
+    const candles = await response.json();
+    state.allCandles = candles;
+    state.currentIndex = 0;
+    candleSeries.setData(candles);
+    chart.timeScale().fitContent();
+    return candles;
+  }
+
+  function applyScaleMode(mode) {
+    chart.priceScale('right').applyOptions({ mode });
+  }
+
+  function takeScreenshot() {
+    const canvas = chart.takeScreenshot();
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL();
+    link.download = 'chart-screenshot.png';
+    link.click();
+  }
+
+  function setSeriesData(candles) {
+    candleSeries.setData(candles);
+  }
+
+  return {
+    chart,
+    candleSeries,
+    loadCandles,
+    applyScaleMode,
+    takeScreenshot,
+    setSeriesData,
+  };
+}

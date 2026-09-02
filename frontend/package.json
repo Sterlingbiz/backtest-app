@@ -1,0 +1,23 @@
+{
+  "name": "frontend",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.1.1"
+  },
+  "dependencies": {
+    "lightweight-charts": "^5.2.0",
+    "lightweight-charts-drawing": "^0.1.1",
+    "lightweight-charts-line-tools-core": "file:../reference/lightweight-charts-line-tools-core",
+    "lightweight-charts-line-tools-fib-retracement": "file:../reference/lightweight-charts-line-tools-fib-retracement",
+    "lightweight-charts-line-tools-lines": "file:../reference/lightweight-charts-line-tools-lines",
+    "lightweight-charts-line-tools-rectangle": "file:../reference/lightweight-charts-line-tools-rectangle",
+    "lightweight-charts-line-tools-text": "file:../reference/lightweight-charts-line-tools-text"
+  }
+}
